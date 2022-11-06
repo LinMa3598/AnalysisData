@@ -426,7 +426,8 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
             total_merge_count = result[4]
             github_id = result[5]
             company = result[6]
-            emain_domain = results[7]
+            emain_domain = result[7]
+            # print(company)
             author_tz = sorted(author_tz.items(), key=operator.itemgetter(1), reverse=True)
             # tz_list = int(author_tz.keys)
             # tz_merge_count = author_tz.values
@@ -498,4 +499,4 @@ if __name__ == '__main__':
         if_merged = 0
         get_merge_count_from_recent_years(year, if_merged, ck_info)
         time.sleep(2)
-    # get_merge_count_from_recent_years(2018, 0)
+    # get_merge_count_from_recent_years(2018, 1,ck_info=ck_info)
