@@ -48,7 +48,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
     arg = ''
     if year != 'all':
         arg = f' and toYear(authored_date)>={year}'
-    sql = f"""
+    sql1 = f"""
         select *,splitByChar('@',author_email)[2] as email_domain from (select a.*,final_company_inferred_from_company from (select a.*,b.author__id from (select a.*,b.merge_counts from (
         WITH CAST(sumMap([area], [merge_counts]), 'Map(String, UInt32)') AS map
     select search_key__owner, search_key__repo, author_email, map from (select search_key__owner, search_key__repo, author_email, area, sum(merge_counts) as merge_counts
@@ -385,9 +385,352 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
                         where final_company_inferred_from_company != ''
                         group by id, final_company_inferred_from_company) as b on a.author__id =b.id)
        """
-    results = ck.execute_no_params(sql=sql)
+
+
+    sql2 = f"""
+    
+        select *,splitByChar('@',committer_email)[2] as email_domain from (select a.*,final_company_inferred_from_company from (select a.*,b.committer__id from (select a.*,b.merge_counts from (
+        WITH CAST(sumMap([area], [merge_counts]), 'Map(String, UInt32)') AS map
+    select search_key__owner, search_key__repo, committer_email, map from (select search_key__owner, search_key__repo, committer_email, area, sum(merge_counts) as merge_counts
+    from (select search_key__owner, search_key__repo, committer_email, committer_tz, '北美' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12)
+              {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '欧洲西部' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (1, 2)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '0时区' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (0)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '欧洲东部' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (3, 4)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '印度' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (5)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '中国' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (8)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '日韩' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (9)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email
+
+
+          union all
+
+          select search_key__owner, search_key__repo, committer_email, committer_tz, '澳洲' as area, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+            and committer_tz global in (10)
+            {arg}
+          group by search_key__owner, search_key__repo, committer_email, committer_tz
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          limit 3 by search_key__owner,search_key__repo,committer_email)
+    group by search_key__owner, search_key__repo, committer_email, area
+    order by search_key__owner,search_key__repo,committer_email, merge_counts desc
+    limit 3 by search_key__owner,search_key__repo,committer_email)
+
+    group by search_key__owner, search_key__repo, committer_email
+    ) as a global left join (select search_key__owner, search_key__repo, committer_email, merge_counts
+    from (select search_key__owner, search_key__repo, committer_email, count() as merge_counts
+          from gits
+          where (search_key__repo = 'rust' or
+                 search_key__repo = 'linux' or
+                 search_key__repo = 'llvm-project' or
+                 search_key__repo = 'FFmpeg' or
+                 search_key__repo = 'servo' or
+                 search_key__repo = 'o3de' or
+                 search_key__repo = 'cgal' or
+                 search_key__repo = 'qemu' or
+                 search_key__repo = 'zookeeper' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'spark' or
+                 search_key__repo = 'kafka' or
+                 search_key__repo = 'redis' or
+                 search_key__repo = 'hadoop' or
+                 search_key__repo = 'meetings' or
+                 search_key__repo = 'design' or
+                 search_key__repo = 'spec' or
+                 search_key__repo = 'proposals' or
+                 search_key__repo = 'gc' or
+                 search_key__repo = 'WASI')
+            and if_merged = {if_merged}
+          
+          group by search_key__owner, search_key__repo, committer_email
+          order by search_key__owner, search_key__repo, committer_email, merge_counts desc
+          )
+    order by search_key__owner, search_key__repo, merge_counts desc) as b on a.search_key__owner = b.search_key__owner and a.search_key__repo = b.search_key__repo and a.committer_email = b.committer_email) as a global left join (select search_key__owner, search_key__repo, commit__committer__email, committer__id,committer__id
+                              from github_commits
+                              where (search_key__repo = 'rust' or
+                                     search_key__repo = 'linux' or
+                                     search_key__repo = 'llvm-project' or
+                                     search_key__repo = 'FFmpeg' or
+                                     search_key__repo = 'servo' or
+                                     search_key__repo = 'o3de' or
+                                     search_key__repo = 'cgal' or
+                                     search_key__repo = 'qemu' or
+                                     search_key__repo = 'zookeeper' or
+                                     search_key__repo = 'kafka' or
+                                     search_key__repo = 'redis' or
+                                     search_key__repo = 'hadoop' or
+                                     search_key__repo = 'spark' or
+                                     search_key__repo = 'kafka' or
+                                     search_key__repo = 'redis' or
+                                     search_key__repo = 'hadoop' or
+                                     search_key__repo = 'meetings' or
+                                     search_key__repo = 'design' or
+                                     search_key__repo = 'spec' or
+                                     search_key__repo = 'proposals' or
+                                     search_key__repo = 'gc' or
+                                     search_key__repo = 'WASI')
+                                and committer__id != 0
+                              group by search_key__owner, search_key__repo, commit__committer__email, committer__id) as b
+    on a.search_key__owner = b.search_key__owner and a.search_key__repo = b.search_key__repo and a.committer_email = b.commit__committer__email) as a global left join
+        (select id, final_company_inferred_from_company
+                        from github_profile
+                        where final_company_inferred_from_company != ''
+                        group by id, final_company_inferred_from_company) as b on a.committer__id =b.id)
+"""
+    if if_merged == 0:
+        results = ck.execute_no_params(sql=sql1)
+    if if_merged == 1:
+        results = ck.execute_no_params(sql=sql2)
     # print(results)
-    print(sql)
+    print(sql1)
     filename = ''
     if if_merged == 1 and year != 'all':
         filename = f"merge_since_{year}_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
@@ -492,11 +835,11 @@ if __name__ == '__main__':
         "database": database
     }
 
-    for year in [2018, 2019, 2020, 2021, 2022, 'all']:
+    for year in [2020, 2021, 2022, 'all']:
         if_merged = 1
         get_merge_count_from_recent_years(year, if_merged, ck_info)
         time.sleep(2)
-        if_merged = 0
-        get_merge_count_from_recent_years(year, if_merged, ck_info)
-        time.sleep(2)
+        # if_merged = 0
+        # get_merge_count_from_recent_years(year, if_merged, ck_info)
+        # time.sleep(2)
     # get_merge_count_from_recent_years(2018, 1,ck_info=ck_info)
