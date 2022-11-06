@@ -413,7 +413,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
                          "area_3_merge_count",
                          "total_merge_count",
                          "github_id",
-                         "company",
+                         "company_inferrd_from_profile",
                          "email_domain"
                          ])
 
