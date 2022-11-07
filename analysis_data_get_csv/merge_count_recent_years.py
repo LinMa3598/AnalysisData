@@ -745,8 +745,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
         writer = csv.writer(csvfile)
 
         # 先写入columns_name
-        writer.writerow(["owner",
-                         "repo",
+        writer.writerow(["org_repo",
                          "email",
                          "area_1",
                          "area_1_merge_count",
@@ -798,8 +797,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
                 area_2_merge_count = author_tz[1][1]
                 author_tz_3 = author_tz[2][0]
                 area_3_merge_count = author_tz[2][1]
-            row.append(owner)
-            row.append(repo)
+            row.append(owner+'_'+repo)
             row.append(email)
             row.append(author_tz_1)
             row.append(area_1_merge_count)

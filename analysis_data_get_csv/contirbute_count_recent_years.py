@@ -755,8 +755,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
 
         # 先写入columns_name
         if if_merged == 0:
-            writer.writerow(["owner",
-                             "repo",
+            writer.writerow(["org_repo",
                              "email",
                              "area_1",
                              "area_1_commit_count",
@@ -841,8 +840,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
                 area_3_commit_count = area_commit_map[2][1][0]
                 area_3_alter_code_count = area_commit_map[2][1][1]
                 area_3_alter_file_count = area_commit_map[2][1][2]
-            row.append(owner)
-            row.append(repo)
+            row.append(owner+'_'+repo)
             row.append(email)
             row.append(author_area_1)
             row.append(area_1_commit_count)
