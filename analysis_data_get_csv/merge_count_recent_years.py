@@ -735,7 +735,7 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
     if if_merged == 1 and year != 'all':
         filename = f"merge_since_{year}_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     elif if_merged == 1 and year == 'all':
-        filename = f"merge_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
+        filename = f"all_year_merge_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     elif if_merged == 0 and year != 'all':
         filename = f"contribute_since_{year}_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     else:
@@ -827,6 +827,7 @@ if __name__ == '__main__':
     user = ''
     password = ''
     database = ''
+
     ck_info = {
         "host": host,
         "port": port,

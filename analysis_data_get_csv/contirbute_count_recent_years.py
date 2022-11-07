@@ -747,8 +747,8 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
         filename = f"merge_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     elif if_merged == 0 and year != 'all':
         filename = f"contribute_since_{year}_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
-    else:
-        filename = f"contribute_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
+    elif year == 'all':
+        filename = f"all_years_contribute_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     with open(filename, "w", encoding='utf8',
               newline='') as csvfile:
         writer = csv.writer(csvfile)

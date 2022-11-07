@@ -737,9 +737,9 @@ def get_merge_count_from_recent_years(year, if_merged, ck_info):
     elif if_merged == 1 and year == 'all':
         filename = f"merge_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     elif if_merged == 0 and year != 'all':
-        filename = f"contribute_since_{year}_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
-    else:
-        filename = f"contribute_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
+        filename = f"not_merge_type_contribute_since_{year}_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
+    elif if_merged == 0 and year == 'all':
+        filename = f"not_merge_type_all_year_contribute_{datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ')}.csv"
     with open(filename, "w", encoding='utf8',
               newline='') as csvfile:
         writer = csv.writer(csvfile)
@@ -822,6 +822,8 @@ if __name__ == '__main__':
     # user = input("请输入用户名:")
     # password = input("请输入密码:")
     # database = input("请输入数据库名字:")
+
+
     host = ''
     port = 0
     user = ''
